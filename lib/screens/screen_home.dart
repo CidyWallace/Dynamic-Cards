@@ -50,6 +50,34 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _confirmCardDelete(DynamicCard card) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Excluir Card?'),
+          content: Text('Tem certeza em excluir o card "${card.title}"?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: Text('cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _dbHelper.deleteCard(card.id);
+                Navigator.pop(dialogContext);
+                _refreshCards();
+              },
+              child: Text('excluir', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showBoxAddCard() {
     TextEditingController titleController = TextEditingController();
 
@@ -108,7 +136,10 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8),
               itemCount: _myCards.length,
               itemBuilder: (context, index) {
-                return WidgetCard(card: _myCards[index]);
+                return WidgetCard(
+                  card: _myCards[index],
+                  onDelete: () => _confirmCardDelete(_myCards[index]),
+                );
               },
             ),
     );
