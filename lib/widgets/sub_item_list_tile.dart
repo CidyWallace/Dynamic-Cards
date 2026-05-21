@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 class SubItemListTile extends StatefulWidget {
   final SubItem item;
   final VoidCallback onSaved;
+  final VoidCallback onDelete;
 
-  const SubItemListTile({super.key, required this.item, required this.onSaved});
+  const SubItemListTile({
+    super.key,
+    required this.item,
+    required this.onSaved,
+    required this.onDelete,
+  });
 
   @override
   State<SubItemListTile> createState() => _SubItemListTileState();
@@ -50,6 +56,10 @@ class _SubItemListTileState extends State<SubItemListTile> {
               item.current >= item.max ? Icons.check_circle : Icons.add_circle,
               color: item.current == item.max ? Colors.green : colors.primary,
             ),
+          ),
+          IconButton(
+            onPressed: () => widget.onDelete(),
+            icon: Icon(Icons.delete),
           ),
         ],
       ),
