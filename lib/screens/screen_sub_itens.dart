@@ -285,8 +285,16 @@ class _screenSubItensState extends State<screenSubItens> {
                 final item = widget.card.itens[index];
 
                 return item.isCounter
-                    ? SubItemListTile(item: item, onSaved: () => {})
-                    : SubItemCheckBox(item: item, onSaved: () => {});
+                    ? SubItemListTile(
+                        item: item,
+                        onSaved: () => {},
+                        onDelete: () => {},
+                      )
+                    : SubItemCheckBox(
+                        item: item,
+                        onSaved: () => {},
+                        onDelete: () => {},
+                      );
               },
             ),
       floatingActionButton: FloatingActionButton.extended(

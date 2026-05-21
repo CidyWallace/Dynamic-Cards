@@ -181,8 +181,9 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return WidgetCard(
                   card: _myCards[index],
-                  onDelete: () => _confirmCardDelete(_myCards[index]),
-                  onUpdate: () => _editTitle(_myCards[index]),
+                  onDeleteCard: () => _confirmCardDelete(_myCards[index]),
+                  onUpdateCard: () => _editTitle(_myCards[index]),
+                  onUpdate: () => _refreshCards(),
                 );
               },
             ),

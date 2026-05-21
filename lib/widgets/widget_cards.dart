@@ -7,14 +7,18 @@ import 'package:flutter/material.dart';
 
 class WidgetCard extends StatefulWidget {
   final DynamicCard card;
-  final VoidCallback onDelete;
   final VoidCallback onUpdate;
+  final VoidCallback onDeleteCard;
+  final VoidCallback onUpdateCard;
+  // final VoidCallback onDeleteSubItem;
 
   const WidgetCard({
     super.key,
     required this.card,
-    required this.onDelete,
+    required this.onDeleteCard,
+    required this.onUpdateCard,
     required this.onUpdate,
+    // required this.onDeleteSubItem,
   });
 
   @override
@@ -39,6 +43,38 @@ class _WidgetCardState extends State<WidgetCard> {
     }
   }
 
+  Future<void> _deleteSubItem(SubItem item) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Excluir sub-item?'),
+          content: Text('Tem certeza em excluir o item "${item.subTitle}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text('cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _dbHelper.deleteSubItem(item.id);
+
+                widget.card.updateAt = DateTime.now();
+                await _dbHelper.addCard(widget.card);
+
+                if (!dialogContext.mounted) return;
+
+                Navigator.pop(dialogContext);
+                widget.onUpdate();
+              },
+              child: Text('excluir', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -55,8 +91,8 @@ class _WidgetCardState extends State<WidgetCard> {
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert),
               onSelected: (value) {
-                if (value == 'delete') widget.onDelete();
-                if (value == 'update') widget.onUpdate();
+                if (value == 'delete') widget.onDeleteCard();
+                if (value == 'update') widget.onUpdateCard();
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(
@@ -89,12 +125,14 @@ class _WidgetCardState extends State<WidgetCard> {
               return SubItemListTile(
                 item: item,
                 onSaved: () => _saveSubItem(item),
+                onDelete: () => _deleteSubItem(item),
               );
             }
 
             return SubItemCheckBox(
               item: item,
               onSaved: () => _saveSubItem(item),
+              onDelete: () => _deleteSubItem(item),
             );
           }),
         ],

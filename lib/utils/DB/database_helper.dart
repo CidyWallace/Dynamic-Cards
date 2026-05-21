@@ -76,7 +76,11 @@ class DatabaseHelper {
   Future<List<DynamicCard>> getAllCards() async {
     final db = await database;
 
-    final List<Map<String, dynamic>> mapsCards = await db.query('tb_card');
+    final List<Map<String, dynamic>> mapsCards = await db.query(
+      'tb_card',
+      where: 'deleted = ?',
+      whereArgs: [0],
+    );
 
     List<DynamicCard> listCards = [];
 
@@ -85,8 +89,8 @@ class DatabaseHelper {
 
       final List<Map<String, dynamic>> mapsSubItens = await db.query(
         'tb_subitem',
-        where: 'card_id = ?',
-        whereArgs: [cardId],
+        where: 'card_id = ? AND deleted = ?',
+        whereArgs: [cardId, 0],
       );
 
       List<SubItem> listSubItens = mapsSubItens
@@ -102,7 +106,23 @@ class DatabaseHelper {
   Future<void> deleteCard(String idCard) async {
     final db = await database;
 
-    await db.delete('tb_card', where: 'id = ?', whereArgs: [idCard]);
+    await db.transaction((txt) async {
+      final currentTime = DateTime.now().toIso8601String();
+
+      await txt.update(
+        'tb_card',
+        {'deleted': 1, 'updateAt': currentTime},
+        where: 'id = ?',
+        whereArgs: [idCard],
+      );
+
+      await txt.update(
+        'tb_subitem',
+        {'deleted': 1, 'updateAt': currentTime},
+        where: 'card_id = ?',
+        whereArgs: [idCard],
+      );
+    });
   }
 
   Future<void> editCard(String idCard, String newTitle) async {
@@ -113,6 +133,17 @@ class DatabaseHelper {
       {'title': newTitle, 'updateAt': DateTime.now().toIso8601String()},
       where: 'id = ?',
       whereArgs: [idCard],
+    );
+  }
+
+  Future<void> deleteSubItem(String idSubItem) async {
+    final db = await database;
+
+    await db.update(
+      'tb_subitem',
+      {'deleted': 1, 'updateAt': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [idSubItem],
     );
   }
 }
