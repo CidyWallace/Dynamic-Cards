@@ -183,10 +183,23 @@ class _screenSubItensState extends State<screenSubItens> {
                           hasError = true;
                         }
 
-                        if (amountController.text.trim().isEmpty) {
+                        int amountParse = 0;
+                        if (amountController.text.trim().isNotEmpty) {
+                          String amonut = amountController.text;
+                          int? amonut_parse = int.tryParse(amonut);
+                          if (amonut_parse == null) {
+                            setModalState(() {
+                              amountError = 'Digite um valor válido';
+                            });
+                            hasError = true;
+                          } else {
+                            amountParse = amonut_parse;
+                          }
+                        } else {
                           setModalState(() {
-                            amountError = 'Digite um valor válido';
+                            amountError = 'Esse campos não pode ficar vazio';
                           });
+                          hasError = true;
                         }
 
                         double valueParse = 0.0;
@@ -238,7 +251,7 @@ class _screenSubItensState extends State<screenSubItens> {
                           subTitle: titleController.text,
                           isCounter: isCounter,
                           value: valueParse,
-                          amount: maxParse,
+                          amount: amountParse,
                           max: maxParse,
                         );
 

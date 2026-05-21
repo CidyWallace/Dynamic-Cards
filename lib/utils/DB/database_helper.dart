@@ -98,4 +98,10 @@ class DatabaseHelper {
 
     return listCards;
   }
+
+  Future<void> deleteCard(String idCard) async {
+    final db = await database;
+
+    await db.delete('tb_card', where: 'id = ?', whereArgs: [idCard]);
+  }
 }

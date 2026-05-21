@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class WidgetCard extends StatefulWidget {
   final DynamicCard card;
+  final VoidCallback onDelete;
 
-  const WidgetCard({super.key, required this.card});
+  const WidgetCard({super.key, required this.card, required this.onDelete});
 
   @override
   State<WidgetCard> createState() => _WidgetCardState();
@@ -37,9 +38,33 @@ class _WidgetCardState extends State<WidgetCard> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ExpansionTile(
-        title: Text(
-          widget.card.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                widget.card.title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) {
+                if (value == 'delete') widget.onDelete();
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, size: 20),
+                      SizedBox(width: 8),
+                      Text('Excluir', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         children: [
           ...widget.card.itens.map<Widget>((item) {
