@@ -1,4 +1,4 @@
-import 'package:card_dinamico/screens/home.dart';
+import 'package:card_dinamico/screens/screen_home.dart';
 import 'package:card_dinamico/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 
