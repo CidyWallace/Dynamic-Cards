@@ -67,10 +67,53 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () async {
                 await _dbHelper.deleteCard(card.id);
+
+                if (!dialogContext.mounted) return;
+
                 Navigator.pop(dialogContext);
                 _refreshCards();
               },
               child: Text('excluir', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _editTitle(DynamicCard card) {
+    TextEditingController newTitleController = TextEditingController();
+    newTitleController.text = card.title;
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Editar Card'),
+          content: TextField(
+            controller: newTitleController,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Novo Título'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text('cancelar', style: TextStyle(color: Colors.red)),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                String? newTitle = newTitleController.text.trim();
+
+                if (newTitle.isNotEmpty) {
+                  await _dbHelper.editCard(card.id, newTitle);
+
+                  if (!dialogContext.mounted) return;
+
+                  Navigator.pop(dialogContext);
+                  _refreshCards();
+                }
+              },
+              child: Text('salvar'),
             ),
           ],
         );
@@ -139,6 +182,7 @@ class _HomePageState extends State<HomePage> {
                 return WidgetCard(
                   card: _myCards[index],
                   onDelete: () => _confirmCardDelete(_myCards[index]),
+                  onUpdate: () => _editTitle(_myCards[index]),
                 );
               },
             ),

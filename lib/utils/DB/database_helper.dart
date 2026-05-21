@@ -104,4 +104,15 @@ class DatabaseHelper {
 
     await db.delete('tb_card', where: 'id = ?', whereArgs: [idCard]);
   }
+
+  Future<void> editCard(String idCard, String newTitle) async {
+    final db = await database;
+
+    await db.update(
+      'tb_card',
+      {'title': newTitle, 'updateAt': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [idCard],
+    );
+  }
 }

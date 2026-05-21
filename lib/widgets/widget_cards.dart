@@ -8,8 +8,14 @@ import 'package:flutter/material.dart';
 class WidgetCard extends StatefulWidget {
   final DynamicCard card;
   final VoidCallback onDelete;
+  final VoidCallback onUpdate;
 
-  const WidgetCard({super.key, required this.card, required this.onDelete});
+  const WidgetCard({
+    super.key,
+    required this.card,
+    required this.onDelete,
+    required this.onUpdate,
+  });
 
   @override
   State<WidgetCard> createState() => _WidgetCardState();
@@ -50,15 +56,26 @@ class _WidgetCardState extends State<WidgetCard> {
               icon: const Icon(Icons.more_vert),
               onSelected: (value) {
                 if (value == 'delete') widget.onDelete();
+                if (value == 'update') widget.onUpdate();
               },
               itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'update',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, size: 20),
+                      SizedBox(width: 8),
+                      Text('editar título'),
+                    ],
+                  ),
+                ),
                 const PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
                       Icon(Icons.delete, size: 20),
                       SizedBox(width: 8),
-                      Text('Excluir', style: TextStyle(color: Colors.red)),
+                      Text('excluir', style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
