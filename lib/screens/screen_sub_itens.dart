@@ -184,7 +184,8 @@ class _screenSubItensState extends State<screenSubItens> {
                         }
 
                         int amountParse = 0;
-                        if (amountController.text.trim().isNotEmpty) {
+                        if (!isCounter &&
+                            amountController.text.trim().isNotEmpty) {
                           String amonut = amountController.text;
                           int? amonut_parse = int.tryParse(amonut);
                           if (amonut_parse == null) {
@@ -195,7 +196,8 @@ class _screenSubItensState extends State<screenSubItens> {
                           } else {
                             amountParse = amonut_parse;
                           }
-                        } else {
+                        } else if (!isCounter &&
+                            amountController.text.trim().isEmpty) {
                           setModalState(() {
                             amountError = 'Esse campos não pode ficar vazio';
                           });
