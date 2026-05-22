@@ -5,12 +5,16 @@ class SubItemListTile extends StatefulWidget {
   final SubItem item;
   final VoidCallback onSaved;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
+  final bool isEdit;
 
   const SubItemListTile({
     super.key,
     required this.item,
     required this.onSaved,
     required this.onDelete,
+    required this.onEdit,
+    this.isEdit = false,
   });
 
   @override
@@ -58,8 +62,8 @@ class _SubItemListTileState extends State<SubItemListTile> {
             ),
           ),
           IconButton(
-            onPressed: () => widget.onDelete(),
-            icon: Icon(Icons.delete),
+            onPressed: widget.isEdit ? widget.onEdit : widget.onDelete,
+            icon: widget.isEdit ? Icon(Icons.edit) : Icon(Icons.delete),
           ),
         ],
       ),
