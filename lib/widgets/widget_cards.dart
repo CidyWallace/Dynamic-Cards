@@ -1,5 +1,6 @@
 import 'package:card_dinamico/models/card.dart';
 import 'package:card_dinamico/models/subItem.dart';
+import 'package:card_dinamico/screens/screen_sub_itens.dart';
 import 'package:card_dinamico/utils/DB/database_helper.dart';
 import 'package:card_dinamico/widgets/sub_item_check_box.dart';
 import 'package:card_dinamico/widgets/sub_item_list_tile.dart';
@@ -93,6 +94,15 @@ class _WidgetCardState extends State<WidgetCard> {
               onSelected: (value) {
                 if (value == 'delete') widget.onDeleteCard();
                 if (value == 'update') widget.onUpdateCard();
+                if (value == 'edit_sub_item') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          screenSubItens(card: widget.card, onUpdate: () => {}),
+                    ),
+                  );
+                }
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(
@@ -102,6 +112,16 @@ class _WidgetCardState extends State<WidgetCard> {
                       Icon(Icons.edit, size: 20),
                       SizedBox(width: 8),
                       Text('editar título'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'edit_sub_item',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, size: 20),
+                      SizedBox(width: 8),
+                      Text('editar sub-item'),
                     ],
                   ),
                 ),
@@ -126,6 +146,7 @@ class _WidgetCardState extends State<WidgetCard> {
                 item: item,
                 onSaved: () => _saveSubItem(item),
                 onDelete: () => _deleteSubItem(item),
+                onEdit: () => {},
               );
             }
 
@@ -133,6 +154,7 @@ class _WidgetCardState extends State<WidgetCard> {
               item: item,
               onSaved: () => _saveSubItem(item),
               onDelete: () => _deleteSubItem(item),
+              onEdit: () => {},
             );
           }),
         ],

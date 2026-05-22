@@ -35,13 +35,30 @@ class _screenSubItensState extends State<screenSubItens> {
     widget.onUpdate();
   }
 
-  void _showPanelNewSubItem() {
-    final titleController = TextEditingController();
-    final valueController = TextEditingController();
-    final maxController = TextEditingController();
-    final amountController = TextEditingController();
+  Future<void> _editSubItem(SubItem item) async {
+    await _dbHelper.updateSubItem(item);
 
-    bool isCounter = false;
+    widget.card.updateAt = DateTime.now();
+    await _dbHelper.addCard(widget.card);
+  }
+
+  void _showPanelNewSubItem({SubItem? item}) {
+    final isEditing = item != null;
+
+    final titleController = TextEditingController(
+      text: isEditing ? item.subTitle : '',
+    );
+    final valueController = TextEditingController(
+      text: isEditing ? item.value.toString() : '0.0',
+    );
+    final maxController = TextEditingController(
+      text: isEditing ? item.max.toString() : '0',
+    );
+    final amountController = TextEditingController(
+      text: isEditing ? item.amount.toString() : '0',
+    );
+
+    bool isCounter = isEditing ? item.isCounter : false;
 
     String? titleError;
     String? valueError;
@@ -70,8 +87,8 @@ class _screenSubItensState extends State<screenSubItens> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Novo Sub-Item',
+                    Text(
+                      isEditing ? 'Editar Sub-item' : 'Novo Sub-Item',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -249,15 +266,26 @@ class _screenSubItensState extends State<screenSubItens> {
 
                         if (hasError) return;
 
-                        final newSubItem = SubItem(
-                          subTitle: titleController.text,
-                          isCounter: isCounter,
-                          value: valueParse,
-                          amount: amountParse,
-                          max: maxParse,
-                        );
-
-                        _saveSubItem(newSubItem);
+                        if (isEditing) {
+                          setState(() {
+                            item.subTitle = titleController.text;
+                            item.isCounter = isCounter;
+                            item.value = valueParse;
+                            item.amount = amountParse;
+                            item.max = maxParse;
+                          });
+                          _editSubItem(item);
+                        } else {
+                          final newSubItem = SubItem(
+                            subTitle: titleController.text,
+                            isCounter: isCounter,
+                            value: valueParse,
+                            amount: amountParse,
+                            max: maxParse,
+                          );
+                          _saveSubItem(newSubItem);
+                        }
+                        widget.onUpdate();
                         Navigator.pop(context);
                       },
                       child: Text('Salvar sub-item'),
@@ -289,11 +317,15 @@ class _screenSubItensState extends State<screenSubItens> {
                         item: item,
                         onSaved: () => {},
                         onDelete: () => {},
+                        onEdit: () => _showPanelNewSubItem(item: item),
+                        isEdit: true,
                       )
                     : SubItemCheckBox(
                         item: item,
                         onSaved: () => {},
                         onDelete: () => {},
+                        onEdit: () => _showPanelNewSubItem(item: item),
+                        isEdit: true,
                       );
               },
             ),

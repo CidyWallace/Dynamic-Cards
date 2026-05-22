@@ -146,4 +146,21 @@ class DatabaseHelper {
       whereArgs: [idSubItem],
     );
   }
+
+  Future<void> updateSubItem(SubItem item) async {
+    final db = await database;
+
+    await db.update(
+      'tb_subitem',
+      {
+        'subTitle': item.subTitle,
+        'isCounter': item.isCounter ? 1 : 0,
+        'value': item.value,
+        'amount': item.amount,
+        'max': item.max,
+      },
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+  }
 }
