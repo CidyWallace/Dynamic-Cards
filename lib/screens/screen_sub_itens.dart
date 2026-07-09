@@ -40,6 +40,7 @@ class _screenSubItensState extends State<screenSubItens> {
 
     widget.card.updateAt = DateTime.now();
     await _dbHelper.addCard(widget.card);
+    widget.onUpdate();
   }
 
   void _showPanelNewSubItem({SubItem? item}) {
@@ -190,7 +191,7 @@ class _screenSubItensState extends State<screenSubItens> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         bool hasError = false;
 
                         if (titleController.text.trim().isEmpty) {
@@ -274,7 +275,7 @@ class _screenSubItensState extends State<screenSubItens> {
                             item.amount = amountParse;
                             item.max = maxParse;
                           });
-                          _editSubItem(item);
+                          await _editSubItem(item);
                         } else {
                           final newSubItem = SubItem(
                             subTitle: titleController.text,
@@ -283,9 +284,10 @@ class _screenSubItensState extends State<screenSubItens> {
                             amount: amountParse,
                             max: maxParse,
                           );
-                          _saveSubItem(newSubItem);
+                          await _saveSubItem(newSubItem);
                         }
-                        widget.onUpdate();
+
+                        if (!context.mounted) return;
                         Navigator.pop(context);
                       },
                       child: Text('Salvar sub-item'),

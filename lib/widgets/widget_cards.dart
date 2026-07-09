@@ -98,8 +98,10 @@ class _WidgetCardState extends State<WidgetCard> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          screenSubItens(card: widget.card, onUpdate: () => {}),
+                      builder: (context) => screenSubItens(
+                        card: widget.card,
+                        onUpdate: widget.onUpdate,
+                      ),
                     ),
                   );
                 }
